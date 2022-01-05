@@ -1,0 +1,16 @@
+title User creates a new note \n using the single page version of the app
+note over browser:
+Browser rerenders the note list 
+on the page and ...
+end note
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+note over browser:
+... sends JSON-data containing 
+the note (content) and
+the timestamp (date) to the server
+end note
+
+server-->browser: HTTP status code 201 (created success status)
+
+
