@@ -1,25 +1,42 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+const Country = ({ info }) => {
+  return (
+    <div>
+      <p>{info.name.common}</p>
+      <>
+        {info.capital.map((c) => (
+          <p key={c}>{c}</p>
+        ))}
+      </>
+      <p>{info.area}</p>
+      <img src={info.flags.png} alt="" />
+    </div>
+  );
+};
+
+const CountryHidden = ({ info }) => {
+  const [hidden, setHidden] = useState(true);
+
+  const infoToShow = hidden ? info.name.common : <Country info={info} />;
+
+  return (
+    <div>
+      {infoToShow}
+      <button onClick={() => setHidden(!hidden)}>
+        {hidden ? "show" : "hide"}
+      </button>
+    </div>
+  );
+};
+
 const Display = ({ countries }) => {
   if (countries.length === 0) return "Start entering the name of a country";
-  else if (countries.length === 1) {
-    console.log(countries[0]);
-    return (
-      <div>
-        <p>{countries[0].name.common}</p>
-        <>
-          {countries[0].capital.map((c) => (
-            <p key={c}>{c}</p>
-          ))}
-        </>
-        <p>{countries[0].area}</p>
-        <img src={countries[0].flags.png} alt="" />
-      </div>
-    );
-  } else if (countries.length <= 10)
+  else if (countries.length === 1) return <Country info={countries[0]} />;
+  else if (countries.length <= 10)
     return countries.map((country) => (
-      <p key={country.name.common}>{country.name.common}</p>
+      <CountryHidden info={country} key={country.name.common} />
     ));
   else return "Too many matches, specify another filter";
 };
