@@ -1,17 +1,54 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+const Weather = ({ city }) => {
+  const [currentWeather, setCurrentWeather] = useState({
+    main: { temp: "" },
+    wind: { speed: "" },
+  });
+  const APIkey = process.env.REACT_APP_WEATHER_API_KEY;
+
+  useEffect(
+    () =>
+      axios
+        .get(
+          `https://api.openweathermap.org/data/2.5/find?q=${city}&appid=${APIkey}&units=metric`
+        )
+        .then((response) => {
+          setCurrentWeather(response.data.list[0]);
+          console.log(response.data.list[0]);
+        }),
+    []
+  );
+
+  return (
+    <div>
+      <h3>Weather in {city}</h3>
+      <p>
+        <b>temperature: </b>
+        {currentWeather.main.temp} Celsius
+      </p>
+      <p>
+        <b>wind: </b>
+        {currentWeather.wind.speed} m/s
+      </p>
+    </div>
+  );
+};
+
 const Country = ({ info }) => {
   return (
     <div>
-      <p>{info.name.common}</p>
+      <h3>{info.name.common}</h3>
       <>
         {info.capital.map((c) => (
-          <p key={c}>{c}</p>
+          <p key={c}>Capital: {c}</p>
         ))}
       </>
-      <p>{info.area}</p>
+      <p>Area: {info.area}</p>
+      <p>Population: {info.population}</p>
       <img src={info.flags.png} alt="" />
+      <Weather city={info.capital[0]} />
     </div>
   );
 };
@@ -67,7 +104,6 @@ const App = () => {
   return (
     <div>
       find countries <input value={filter} onChange={handleFilterChange} />
-      <p>debug: {filter}</p>
       <Display countries={countriesToShow} />
     </div>
   );
