@@ -55,7 +55,6 @@ const Country = ({ info }) => {
 
 const CountryHidden = ({ info }) => {
   const [hidden, setHidden] = useState(true);
-
   const infoToShow = hidden ? info.name.common : <Country info={info} />;
 
   return (
@@ -68,14 +67,15 @@ const CountryHidden = ({ info }) => {
   );
 };
 
-const Display = ({ countries }) => {
-  if (countries.length === 0) return "Start entering the name of a country";
+const SearchResult = ({ countries, filter }) => {
+  if (!filter) return <p>Start entering the name of a country</p>;
+  else if (countries.length === 0) return <p>No matching countries found</p>;
   else if (countries.length === 1) return <Country info={countries[0]} />;
   else if (countries.length <= 10)
     return countries.map((country) => (
       <CountryHidden info={country} key={country.name.common} />
     ));
-  else return "Too many matches, specify another filter";
+  else return <p>Too many matches, specify another filter</p>;
 };
 
 const App = () => {
@@ -104,7 +104,7 @@ const App = () => {
   return (
     <div>
       find countries <input value={filter} onChange={handleFilterChange} />
-      <Display countries={countriesToShow} />
+      <SearchResult countries={countriesToShow} filter={filter} />
     </div>
   );
 };
