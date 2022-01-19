@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import personService from "./services/persons";
-import Notification from "./components/Notification";
-import Person from "./components/Person";
+import { useState, useEffect } from 'react';
+import personService from './services/persons';
+import Notification from './components/Notification';
+import Person from './components/Person';
 
 const Filter = ({ value, onChange }) => (
   <div>
@@ -43,9 +43,9 @@ const Phonebook = ({ persons, filter, remove }) => {
 
 const App = () => {
   const [persons, setPersons] = useState([]);
-  const [newName, setNewName] = useState("");
-  const [newNumber, setNewNumber] = useState("");
-  const [filter, setFilter] = useState("");
+  const [newName, setNewName] = useState('');
+  const [newNumber, setNewNumber] = useState('');
+  const [filter, setFilter] = useState('');
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
@@ -60,8 +60,8 @@ const App = () => {
     setTimeout(() => setErrorMessage(null), 5000);
   };
   const handleSuccessPhonebookEditing = (message) => {
-    setNewName("");
-    setNewNumber("");
+    setNewName('');
+    setNewNumber('');
     setSuccessMessage(message);
     setTimeout(() => setSuccessMessage(null), 5000);
   };
@@ -88,13 +88,19 @@ const App = () => {
           })
           .then((response) => {
             setPersons(
-              persons.map((p) =>
-                p.id !== personWithSameName.id ? p : response
-              )
+              persons.map((p) => {
+                return p.id !== personWithSameName.id ? p : response;
+              })
             );
             handleSuccessPhonebookEditing(`${newName}'s number was changed`);
           })
-          .catch(() => handleRemovedPersonError());
+          .catch((error) => {
+            if (error.response.data.type === 'ValidationError') {
+              personService.getAll().then((response) => setPersons(response));
+              setErrorMessage(error.response.data.error);
+              setTimeout(() => setErrorMessage(null), 5000);
+            } else handleRemovedPersonError();
+          });
       }
     } else if (personWithSameNumber) {
       window.alert(
@@ -106,6 +112,10 @@ const App = () => {
         .then((response) => {
           setPersons(persons.concat(response));
           handleSuccessPhonebookEditing(`Added ${newName}`);
+        })
+        .catch((error) => {
+          setErrorMessage(error.response.data.error);
+          setTimeout(() => setErrorMessage(null), 5000);
         });
     }
   };
@@ -134,10 +144,10 @@ const App = () => {
 
   return (
     <div>
-      <h1>Phonebook</h1>
+      <h1>PhoneBook</h1>
       <Filter value={filter} onChange={handleFilterChange} />
-      <Notification message={errorMessage} color={"red"} />
-      <Notification message={successMessage} color={"green"} />
+      <Notification message={errorMessage} color={'red'} />
+      <Notification message={successMessage} color={'green'} />
       <h2>Add a new</h2>
       <PesronForm
         onSubmit={addPerson}
