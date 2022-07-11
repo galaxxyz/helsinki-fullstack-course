@@ -49,10 +49,9 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
-  useEffect(
-    () => personService.getAll().then((response) => setPersons(response)),
-    []
-  );
+  useEffect(() => {
+    personService.getAll().then((response) => setPersons(response));
+  }, []);
 
   const handleRemovedPersonError = () => {
     personService.getAll().then((response) => setPersons(response));
